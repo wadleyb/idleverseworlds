@@ -1,28 +1,9 @@
-import { Game } from "./game/Game";
-import { ProgressionManager } from "./game/ProgressionManager";
-import { inject } from "@vercel/analytics";
+import { IdleverseGame } from "./game/IdleverseGame";
 
-// Initialize Vercel Web Analytics
-inject({
-  mode: import.meta.env.PROD ? "production" : "development",
-});
+const app = document.getElementById("app");
+if (!app) throw new Error("Missing #app root");
 
-if (import.meta.env.DEV) {
-  const params = new URLSearchParams(window.location.search);
-  if (params.has("clearSave")) {
-    ProgressionManager.clearAll();
-    params.delete("clearSave");
-    const q = params.toString();
-    window.history.replaceState(
-      {},
-      "",
-      `${window.location.pathname}${q ? `?${q}` : ""}${window.location.hash}`,
-    );
-  }
-}
-
-const app = document.getElementById("app")!;
-const game = new Game(app);
+const game = new IdleverseGame(app);
 game.start();
 
 if (import.meta.hot) {
