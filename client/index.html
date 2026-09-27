@@ -2,106 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Tiny Skies</title>
-  <!-- Production: https://tinyskies.vercel.app — bump ?v= on image URLs when you replace public/social-card.png so X/Discord refresh the cache. -->
-  <meta name="description" content="A cosy exploration game: fly a biplane, magic carpet, or boat around a tiny world. Light the five eternal braziers and save it from the moon." />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Tiny Skies" />
-  <meta name="twitter:description" content="A cosy exploration game: fly a biplane, magic carpet, or boat around a tiny world. Light the five eternal braziers and save it from the moon." />
-  <meta name="twitter:image" content="https://tinyskies.vercel.app/social-card.png?v=2" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Tiny Skies" />
-  <meta property="og:description" content="A cosy exploration game: fly a biplane, magic carpet, or boat around a tiny world. Light the five eternal braziers and save it from the moon." />
-  <meta property="og:image" content="https://tinyskies.vercel.app/social-card.png?v=2" />
-  <meta property="og:image:alt" content="Tiny Skies" />
-  <meta property="og:url" content="https://tinyskies.vercel.app/" />
-  <meta property="og:site_name" content="Tiny Skies" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
+  <title>Idleverse</title>
+  <meta
+    name="description"
+    content="Idleverse is a living tiny-world simulator. Observe a planet, watch settlements evolve, and zoom down to walk through the world."
+  />
+  <meta name="theme-color" content="#081624" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     @font-face {
-      font-family: 'Darumadrop One';
-      src: url('/fonts/DarumadropOne-Regular.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
-    @font-face {
-      font-family: 'Domine';
-      src: url('/fonts/Domine-Regular.ttf') format('truetype');
+      font-family: "Darumadrop One";
+      src: url("/fonts/DarumadropOne-Regular.ttf") format("truetype");
       font-weight: 400;
       font-style: normal;
     }
+
     @font-face {
-      font-family: 'Domine';
-      src: url('/fonts/Domine-Medium.ttf') format('truetype');
-      font-weight: 500;
+      font-family: "Domine";
+      src: url("/fonts/Domine-Regular.ttf") format("truetype");
+      font-weight: 400;
       font-style: normal;
     }
+
     @font-face {
-      font-family: 'Domine';
-      src: url('/fonts/Domine-SemiBold.ttf') format('truetype');
+      font-family: "Domine";
+      src: url("/fonts/Domine-SemiBold.ttf") format("truetype");
       font-weight: 600;
       font-style: normal;
     }
+
     @font-face {
-      font-family: 'Domine';
-      src: url('/fonts/Domine-Bold.ttf') format('truetype');
+      font-family: "Domine";
+      src: url("/fonts/Domine-Bold.ttf") format("truetype");
       font-weight: 700;
       font-style: normal;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    /* Default: normal cursor (touch / mobile). */
-    html, body, * { cursor: auto !important; }
-    /* Custom cursor only on real mouse + hover-capable devices (not phones / most tablets). */
-    @media (pointer: fine) and (hover: hover) {
-      html, body, * { cursor: none !important; }
+
+    * {
+      box-sizing: border-box;
     }
-    html { -webkit-text-size-adjust: 100%; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Domine', Georgia, serif; }
-    #app { width: 100%; height: 100%; position: relative; }
-    canvas { display: block; }
-    #custom-cursor {
-      position: fixed; top: 0; left: 0; width: 36px; height: 40px;
-      pointer-events: none; z-index: 99999;
-      background: url("/2D/cursor.png") no-repeat 0 0;
-      background-size: 36px 40px;
-      opacity: 0; transition: opacity 0.4s ease;
+
+    html,
+    body,
+    #app {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
     }
-    /* Touch / no-hover: hide custom cursor if DOM exists (e.g. cached HTML). */
-    @media (pointer: coarse), (hover: none) {
-      #custom-cursor { display: none !important; }
+
+    html,
+    body {
+      background: #081624;
+      font-family: "Domine", Georgia, serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    canvas {
+      display: block;
     }
   </style>
-  <script>
-    (function(){
-      /* Skip synthetic triangle cursor on touch / mobile — avoids stray triangle on touchmove. */
-      try {
-        if (!window.matchMedia("(pointer: fine)").matches) return;
-        if (!window.matchMedia("(hover: hover)").matches) return;
-      } catch (e) { return; }
-      var c = document.createElement('div');
-      c.id = 'custom-cursor';
-      document.documentElement.appendChild(c);
-      var ox = 3, oy = 3, t, visible = false;
-      function show() {
-        if (!visible) { c.style.opacity = '1'; visible = true; }
-        clearTimeout(t);
-        t = setTimeout(function(){ c.style.opacity = '0'; visible = false; }, 2000);
-      }
-      document.addEventListener('mousemove', function(e) {
-        c.style.transform = 'translate(' + (e.clientX - ox) + 'px,' + (e.clientY - oy) + 'px)';
-        show();
-      });
-      document.addEventListener('mousedown', show);
-      t = setTimeout(function(){ c.style.opacity = '0'; visible = false; }, 2000);
-    })();
-  </script>
 </head>
 <body>
   <div id="app"></div>
   <script type="module" src="/src/main.ts"></script>
-  <script async src="https://vibej.am/2026/widget.js"></script>
 </body>
 </html>
